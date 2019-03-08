@@ -86,7 +86,6 @@ router.post('/', passport.authenticate('jwt', { session: false }), (req, res) =>
     profileFields.social.instagram = req.body.instagram;
   };
 
-
 });
 
 
