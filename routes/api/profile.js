@@ -39,6 +39,27 @@ router.get('/', passport.authenticate('jwt', { session: false }), (req, res) => 
 });
 
 
+//@route    GET api/profile/profile/all
+//@desc     Get all profiles
+//@access   Public 
+
+router.get('/all', (req, res) => {
+  const errors = {};
+  Profile.find()
+    .populate('user', ['name', 'avatar'])
+    .then(profiles => {
+      if (!profiles) {
+        errors.noprofile = 'There is no profiles';
+        return res.status(404).json(errors);
+      }
+      res.json(profiles);
+    })
+    .catch(err => res.status(404).json({ profile: 'There are no profiles!' }))
+
+})
+
+
+
 
 //@route    GET api/profile/handle/:handle
 //@desc     Get profile by handle
@@ -51,7 +72,7 @@ router.get('/handle/:handle', (req, res) => {
     .then(profile => {
       if (!profile) {
         errors.noprofile = 'There is no profile for this user';
-        res.status(404).json(errors);
+        return res.status(404).json(errors);
       }
       res.json(profile)
     })
@@ -70,7 +91,7 @@ router.get('/user/:user_id', (req, res) => {
     .then(profile => {
       if (!profile) {
         errors.noprofile = 'There is no profile for this user';
-        res.status(404).json(errors);
+        return res.status(404).json(errors);
       }
       res.json(profile)
     })
@@ -168,6 +189,12 @@ router.post('/', passport.authenticate('jwt', { session: false }), (req, res) =>
 
 });
 
+//@route    GET api/profile/experience
+//@desc     Add experience to a profile
+//@access   Private
 
+router.post('/exprience', passport.authenticate('jwt', { session: false }), (req, res) => {
+
+});
 
 module.exports = router;
