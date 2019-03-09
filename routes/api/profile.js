@@ -7,6 +7,10 @@ const passport = require('passport');
 const Profile = require('../../models/Profile');
 const User = require('../../models/User');
 
+//Load Validation
+const validateProfileInput = require('../../validation/profile');
+
+
 
 //@route    GET api/profile/test
 //@desc     Test profile router
@@ -20,7 +24,7 @@ router.get('/test', (req, res) => res.json({ msg: "Profile works" }));
 
 router.get('/', passport.authenticate('jwt', { session: false }), (req, res) => {
   const errors = {};
-  console.log(req.user);
+  //console.log(req.user);
 
   Profile.findOne({ user: req.user.id })
     .then(profile => {
@@ -39,6 +43,14 @@ router.get('/', passport.authenticate('jwt', { session: false }), (req, res) => 
 //@access   Private
 
 router.post('/', passport.authenticate('jwt', { session: false }), (req, res) => {
+  //Validation check
+  const { errors, isValid } = validateProfileInput(req.body);
+  if (!isValid) {
+    return res.status(400).json(errors);
+  }
+
+
+
   //Get fields
   const profileFields = {};
   profileFields.user = req.user.id;
